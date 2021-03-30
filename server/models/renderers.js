@@ -36,10 +36,10 @@ module.exports = class Renderer extends Model {
   }
 
   static async fetchDefinitions() {
-    const rendererDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/rendering'))
+    const rendererDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/rendering'))
     let diskRenderers = []
     for (let dir of rendererDirs) {
-      const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/rendering', dir, 'definition.yml'), 'utf8')
+      const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/rendering', dir, 'definition.yml'), 'utf8')
       diskRenderers.push(yaml.safeLoad(def))
     }
     WIKI.data.renderers = diskRenderers.map(renderer => ({

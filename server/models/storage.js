@@ -41,10 +41,10 @@ module.exports = class Storage extends Model {
       const dbTargets = await WIKI.models.storage.query()
 
       // -> Fetch definitions from disk
-      const storageDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/storage'))
+      const storageDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/storage'))
       let diskTargets = []
       for (let dir of storageDirs) {
-        const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/storage', dir, 'definition.yml'), 'utf8')
+        const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/storage', dir, 'definition.yml'), 'utf8')
         diskTargets.push(yaml.safeLoad(def))
       }
       WIKI.data.storage = diskTargets.map(target => ({

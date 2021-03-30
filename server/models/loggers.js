@@ -41,10 +41,10 @@ module.exports = class Logger extends Model {
       const dbLoggers = await WIKI.models.loggers.query()
 
       // -> Fetch definitions from disk
-      const loggersDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/logging'))
+      const loggersDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/logging'))
       let diskLoggers = []
       for (let dir of loggersDirs) {
-        const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/logging', dir, 'definition.yml'), 'utf8')
+        const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/logging', dir, 'definition.yml'), 'utf8')
         diskLoggers.push(yaml.safeLoad(def))
       }
       WIKI.data.loggers = diskLoggers.map(logger => ({

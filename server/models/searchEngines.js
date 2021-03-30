@@ -41,10 +41,10 @@ module.exports = class SearchEngine extends Model {
       const dbSearchEngines = await WIKI.models.searchEngines.query()
 
       // -> Fetch definitions from disk
-      const searchEnginesDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/search'))
+      const searchEnginesDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/search'))
       let diskSearchEngines = []
       for (let dir of searchEnginesDirs) {
-        const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/search', dir, 'definition.yml'), 'utf8')
+        const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/search', dir, 'definition.yml'), 'utf8')
         diskSearchEngines.push(yaml.safeLoad(def))
       }
       WIKI.data.searchEngines = diskSearchEngines.map(searchEngine => ({

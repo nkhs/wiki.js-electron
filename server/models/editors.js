@@ -40,10 +40,10 @@ module.exports = class Editor extends Model {
       const dbEditors = await WIKI.models.editors.query()
 
       // -> Fetch definitions from disk
-      const editorDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/editor'))
+      const editorDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/editor'))
       let diskEditors = []
       for (let dir of editorDirs) {
-        const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/editor', dir, 'definition.yml'), 'utf8')
+        const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/editor', dir, 'definition.yml'), 'utf8')
         diskEditors.push(yaml.safeLoad(def))
       }
       WIKI.data.editors = diskEditors.map(editor => ({

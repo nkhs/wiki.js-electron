@@ -6,15 +6,18 @@
 const path = require('path')
 const { nanoid } = require('nanoid')
 const { DateTime } = require('luxon')
+const { EventEmitter } = require('events')
+const resourceConfig = require('./config')
 
 let WIKI = {
+  serverEvent: new EventEmitter(),
   IS_DEBUG: process.env.NODE_ENV === 'development',
   IS_MASTER: true,
   ROOTPATH: './',
   INSTANCE_ID: nanoid(10),
   SERVERPATH: './server',
-  RESOURCES_PATH: './resources',
-  RESOURCES_SERVER_PATH: './resources/server',
+  RESOURCES_PATH: resourceConfig.RESOURCES_PATH,
+  RESOURCES_SERVER_PATH: resourceConfig.RESOURCES_SERVER_PATH,
   Error: require('./helpers/error'),
   configSvc: require('./core/config'),
   kernel: require('./core/kernel'),

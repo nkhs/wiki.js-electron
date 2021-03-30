@@ -80,10 +80,10 @@ module.exports = class Authentication extends Model {
       const dbStrategies = await WIKI.models.authentication.query()
 
       // -> Fetch definitions from disk
-      const authDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/authentication'))
+      const authDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/authentication'))
       WIKI.data.authentication = []
       for (let dir of authDirs) {
-        const defRaw = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/authentication', dir, 'definition.yml'), 'utf8')
+        const defRaw = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/authentication', dir, 'definition.yml'), 'utf8')
         const def = yaml.safeLoad(defRaw)
         WIKI.data.authentication.push({
           ...def,

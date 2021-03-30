@@ -51,7 +51,7 @@ class Job {
   async invoke(data) {
     try {
       if (this.worker) {
-        const proc = childProcess.fork(`server/core/worker.js`, [
+        const proc = childProcess.fork(`${__dirname}/../core/worker.js`, [
           `--job=${this.name}`,
           `--data=${data}`
         ], {

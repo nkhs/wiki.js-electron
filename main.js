@@ -3,8 +3,11 @@ const path = require('path')
 
 var winGlobal;
 
-require('./server/index.js')// This will run express server with port 3000
-setTimeout(() => winGlobal.loadURL('http://localhost:3456'), 5000);
+require('./server/index.js')
+
+global.WIKI.serverEvent.on('success', ()=> {
+    setTimeout(() => winGlobal.loadURL('http://localhost:3456'), 500);
+});
 
 function createWindow() {
     const win = new BrowserWindow({

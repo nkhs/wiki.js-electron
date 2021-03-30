@@ -13,7 +13,7 @@ module.exports = {
    */
   init() {
     let confPaths = {
-      config: '../../config.yml',
+      config: path.join(WIKI.RESOURCES_SERVER_PATH, 'config.yml'),
       data: path.join(WIKI.RESOURCES_SERVER_PATH, 'app/data.yml'),
       dataRegex: '../app/regex.js'
     }

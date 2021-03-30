@@ -41,10 +41,10 @@ module.exports = class Analytics extends Model {
       const dbProviders = await WIKI.models.analytics.query()
 
       // -> Fetch definitions from disk
-      const analyticsDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/analytics'))
+      const analyticsDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/analytics'))
       let diskProviders = []
       for (let dir of analyticsDirs) {
-        const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/analytics', dir, 'definition.yml'), 'utf8')
+        const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/analytics', dir, 'definition.yml'), 'utf8')
         diskProviders.push(yaml.safeLoad(def))
       }
       WIKI.data.analytics = diskProviders.map(provider => ({

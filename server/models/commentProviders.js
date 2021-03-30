@@ -45,10 +45,10 @@ module.exports = class CommentProvider extends Model {
       const dbProviders = await WIKI.models.commentProviders.query()
 
       // -> Fetch definitions from disk
-      const commentDirs = await fs.readdir(path.join(WIKI.SERVERPATH, 'modules/comments'))
+      const commentDirs = await fs.readdir(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/comments'))
       let diskProviders = []
       for (let dir of commentDirs) {
-        const def = await fs.readFile(path.join(WIKI.SERVERPATH, 'modules/comments', dir, 'definition.yml'), 'utf8')
+        const def = await fs.readFile(path.join(WIKI.RESOURCES_SERVER_PATH, 'modules/comments', dir, 'definition.yml'), 'utf8')
         diskProviders.push(yaml.safeLoad(def))
       }
       WIKI.data.commentProviders = diskProviders.map(provider => ({

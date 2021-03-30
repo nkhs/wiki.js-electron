@@ -440,6 +440,7 @@ module.exports = () => {
   })
 
   WIKI.server.on('listening', () => {
+    WIKI.serverEvent.emit('success', 'ok');
     WIKI.logger.info('HTTP Server: [ RUNNING ]')
     WIKI.logger.info('🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻')
     WIKI.logger.info('')

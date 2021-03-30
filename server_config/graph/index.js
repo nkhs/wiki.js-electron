@@ -20,9 +20,9 @@ WIKI.GQLEmitter = new PubSub()
 // Schemas
 
 let typeDefs = [createRateLimitTypeDef()]
-let schemas = fs.readdirSync(path.join(WIKI.RESOURCES_SERVER_PATH, 'graph/schemas'))
+let schemas = fs.readdirSync(path.join(WIKI.SERVERPATH, 'graph/schemas'))
 schemas.forEach(schema => {
-  typeDefs.push(fs.readFileSync(path.join(WIKI.RESOURCES_SERVER_PATH, `graph/schemas/${schema}`), 'utf8'))
+  typeDefs.push(fs.readFileSync(path.join(WIKI.SERVERPATH, `graph/schemas/${schema}`), 'utf8'))
 })
 
 // Resolvers
@@ -30,7 +30,7 @@ schemas.forEach(schema => {
 let resolvers = {
   // Upload: GraphQLUpload
 }
-const resolversObj = _.values(require('../graph/resolvers'))
+const resolversObj = _.values(autoload(path.join(WIKI.SERVERPATH, 'graph/resolvers')))
 resolversObj.forEach(resolver => {
   _.merge(resolvers, resolver)
 })
@@ -38,7 +38,7 @@ resolversObj.forEach(resolver => {
 // Directives
 
 let schemaDirectives = {
-  ...require('../graph/directives')
+  ...autoload(path.join(WIKI.SERVERPATH, 'graph/directives'))
 }
 
 // Live Trail Logger (admin)
