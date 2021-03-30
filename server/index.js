@@ -10,9 +10,11 @@ const { DateTime } = require('luxon')
 let WIKI = {
   IS_DEBUG: process.env.NODE_ENV === 'development',
   IS_MASTER: true,
-  ROOTPATH: process.cwd(),
+  ROOTPATH: './',
   INSTANCE_ID: nanoid(10),
-  SERVERPATH: path.join(process.cwd(), 'server'),
+  SERVERPATH: './server',
+  RESOURCES_PATH: './resources',
+  RESOURCES_SERVER_PATH: './resources/server',
   Error: require('./helpers/error'),
   configSvc: require('./core/config'),
   kernel: require('./core/kernel'),

@@ -3,8 +3,8 @@ const path = require('path')
 
 var winGlobal;
 
-// require('./server/index.js')// This will run express server with port 3000
-// setTimeout(() => winGlobal.loadURL('http://localhost:3000'), 5000);
+require('./server/index.js')// This will run express server with port 3000
+setTimeout(() => winGlobal.loadURL('http://localhost:3000'), 5000);
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -15,6 +15,7 @@ function createWindow() {
         }
     })
     winGlobal = win;
+    win.setMenuBarVisibility(false)
     win.loadFile('./index.html')
 }
 

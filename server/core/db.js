@@ -157,7 +157,8 @@ module.exports = {
 
     // Load DB Models
 
-    const models = autoload(path.join(WIKI.SERVERPATH, 'models'))
+    const models =require('../models'); // autoload(path.join(WIKI.SERVERPATH, 'models'))
+    // console.log('.......', models)
 
     // Set init tasks
     let conAttempts = 0

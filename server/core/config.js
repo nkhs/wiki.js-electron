@@ -13,9 +13,9 @@ module.exports = {
    */
   init() {
     let confPaths = {
-      config: path.join(WIKI.ROOTPATH, 'config.yml'),
-      data: path.join(WIKI.SERVERPATH, 'app/data.yml'),
-      dataRegex: path.join(WIKI.SERVERPATH, 'app/regex.js')
+      config: '../../config.yml',
+      data: path.join(WIKI.RESOURCES_SERVER_PATH, 'app/data.yml'),
+      dataRegex: '../app/regex.js'
     }
 
     if (process.env.dockerdev) {
@@ -56,7 +56,7 @@ module.exports = {
       appconfig.port = process.env.PORT || 80
     }
 
-    const packageInfo = require(path.join(WIKI.ROOTPATH, 'package.json'))
+    const packageInfo = path.join(WIKI.RESOURCES_SERVER_PATH, 'package.json')
 
     // Load DB Password from Docker Secret File
     if (process.env.DB_PASS_FILE) {

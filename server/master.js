@@ -26,8 +26,8 @@ module.exports = async () => {
   // Load middlewares
   // ----------------------------------------
 
-  const mw = autoload(path.join(WIKI.SERVERPATH, '/middlewares'))
-  const ctrl = autoload(path.join(WIKI.SERVERPATH, '/controllers'))
+  const mw = require('./middlewares')
+  const ctrl = require('./controllers')
 
   // ----------------------------------------
   // Define Express App
@@ -52,7 +52,7 @@ module.exports = async () => {
   // Public Assets
   // ----------------------------------------
 
-  app.use(favicon(path.join(WIKI.ROOTPATH, 'assets', 'favicon.ico')))
+  app.use(favicon(path.join(WIKI.RESOURCES_PATH, 'assets', 'favicon.ico')))
   app.use('/_assets/svg/twemoji', async (req, res, next) => {
     try {
       WIKI.asar.serve('twemoji', req, res, next)
@@ -60,7 +60,7 @@ module.exports = async () => {
       res.sendStatus(404)
     }
   })
-  app.use('/_assets', express.static(path.join(WIKI.ROOTPATH, 'assets'), {
+  app.use('/_assets', express.static(path.join(WIKI.RESOURCES_PATH, 'assets'), {
     index: false,
     maxAge: '7d'
   }))
@@ -104,7 +104,7 @@ module.exports = async () => {
   // View Engine Setup
   // ----------------------------------------
 
-  app.set('views', path.join(WIKI.SERVERPATH, 'views'))
+  app.set('views', path.join(WIKI.RESOURCES_SERVER_PATH, 'views'))
   app.set('view engine', 'pug')
 
   app.use(bodyParser.urlencoded({ extended: false, limit: '1mb' }))

@@ -21,7 +21,17 @@
     "directories": {
       "output": "build"
     },
-    "asar": true
+    "asar": true,
+    "extraResources": [
+      {
+        "from": "./server_config",
+        "to": "server",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "./assets/**"
+    ]
   },
   "dependencies": {
     "@aoberoi/passport-slack": "1.0.5",

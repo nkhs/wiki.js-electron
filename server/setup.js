@@ -33,14 +33,14 @@ module.exports = () => {
   // Public Assets
   // ----------------------------------------
 
-  app.use(favicon(path.join(WIKI.ROOTPATH, 'assets', 'favicon.ico')))
-  app.use('/_assets', express.static(path.join(WIKI.ROOTPATH, 'assets')))
+  app.use(favicon(path.join(WIKI.RESOURCES_PATH, 'assets', 'favicon.ico')))
+  app.use('/_assets', express.static(path.join(WIKI.RESOURCES_PATH, 'assets')))
 
   // ----------------------------------------
   // View Engine Setup
   // ----------------------------------------
 
-  app.set('views', path.join(WIKI.SERVERPATH, 'views'))
+  app.set('views', path.join(WIKI.RESOURCES_SERVER_PATH, 'views'))
   app.set('view engine', 'pug')
 
   app.use(bodyParser.json())
@@ -65,7 +65,7 @@ module.exports = () => {
   // ----------------------------------------
 
   app.get('*', async (req, res) => {
-    let packageObj = await fs.readJson(path.join(WIKI.ROOTPATH, 'package.json'))
+    let packageObj = await fs.readJson(path.join(WIKI.RESOURCES_SERVER_PATH, 'package.json'))
     res.render('setup', { packageObj })
   })
 
