@@ -1,11 +1,11 @@
-# Run with develop mod
-```
-npx electron .
-```
+# I Found Solution
+instead of running with mouse double click at File Explorer, 
+i used windows command prompt,
+and, from there, i can find error logs.
 
-# Build exe
-```
-npx electron-builder
-```
+So, i found: the some relative path is not working, because, the electron pack source code with asar.
 
-New exe will be generated in 'build' directory
+and, some file operate is not working, etc fs.read, fs.readDir.
+
+https://stackoverflow.com/questions/37559596/cannot-access-files-inside-asar-archive-in-electron-app
+, So, i removed solved this problem.
