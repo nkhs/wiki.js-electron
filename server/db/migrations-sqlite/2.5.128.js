@@ -2,6 +2,9 @@ exports.up = async knex => {
   await knex('users').update({
     email: knex.raw('LOWER(email)')
   })
+  await knex.schema.alterTable('pages', table => {
+    table.boolean('isSynced').defaultTo(false)
+  })
 }
 
 exports.down = knex => { }

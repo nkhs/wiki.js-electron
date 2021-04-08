@@ -25,10 +25,43 @@ db:
 
   # PostgreSQL / MySQL / MariaDB / MS SQL Server only:
   host: localhost
-  port: 5432
-  user: wikijs
-  pass: wikijsrocks
+  port: 3306
+  user: root
+  pass: ""
   db: wiki
+  #Cloud db sample
+  # host: 3.142.66.128
+  # port: 3306
+  # user: remoteroot
+  # pass: 123456
+  # db: dd
+
+  ssl: false
+
+  # Optional - PostgreSQL / MySQL / MariaDB only:
+  # -> Uncomment lines you need below and set `auto` to false
+  # -> Full list of accepted options: https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
+  sslOptions:
+    auto: true
+    # rejectUnauthorized: false
+    # ca: path/to/ca.crt
+    # cert: path/to/cert.crt
+    # key: path/to/key.pem
+    # pfx: path/to/cert.pfx
+    # passphrase: xyz123
+
+  # SQLite only:
+  storage: ./database2.sqlite
+
+clouddb:
+  type: mysql
+
+  # PostgreSQL / MySQL / MariaDB / MS SQL Server only:
+  host: 3.142.66.128
+  port: 3306
+  user: remoteroot
+  pass: 123456
+  db: dd
   ssl: false
 
   # Optional - PostgreSQL / MySQL / MariaDB only:

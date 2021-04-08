@@ -17,6 +17,7 @@ const migrateFromBeta = require('../db/beta')
 module.exports = {
   Objection,
   knex: null,
+  
   listener: null,
   /**
    * Initialize DB
@@ -30,19 +31,19 @@ module.exports = {
 
     let dbClient = null
     let dbConfig = (!_.isEmpty(process.env.DATABASE_URL)) ? process.env.DATABASE_URL : {
-      host: WIKI.config.db.host.toString(),
-      user: WIKI.config.db.user.toString(),
-      password: WIKI.config.db.pass.toString(),
-      database: WIKI.config.db.db.toString(),
-      port: WIKI.config.db.port
+      host: WIKI.config.clouddb.host.toString(),
+      user: WIKI.config.clouddb.user.toString(),
+      password: WIKI.config.clouddb.pass.toString(),
+      database: WIKI.config.clouddb.db.toString(),
+      port: WIKI.config.clouddb.port
     }
 
     // Handle SSL Options
 
-    let dbUseSSL = (WIKI.config.db.ssl === true || WIKI.config.db.ssl === 'true' || WIKI.config.db.ssl === 1 || WIKI.config.db.ssl === '1')
+    let dbUseSSL = (WIKI.config.clouddb.ssl === true || WIKI.config.clouddb.ssl === 'true' || WIKI.config.clouddb.ssl === 1 || WIKI.config.clouddb.ssl === '1')
     let sslOptions = null
-    if (dbUseSSL && _.isPlainObject(dbConfig) && _.get(WIKI.config.db, 'sslOptions.auto', null) === false) {
-      sslOptions = WIKI.config.db.sslOptions
+    if (dbUseSSL && _.isPlainObject(dbConfig) && _.get(WIKI.config.clouddb, 'sslOptions.auto', null) === false) {
+      sslOptions = WIKI.config.clouddb.sslOptions
       sslOptions.rejectUnauthorized = sslOptions.rejectUnauthorized !== false
       if (sslOptions.ca && sslOptions.ca.indexOf('-----') !== 0) {
         sslOptions.ca = fs.readFileSync(path.resolve(WIKI.ROOTPATH, sslOptions.ca))
@@ -75,7 +76,7 @@ module.exports = {
     }
 
     // Engine-specific config
-    switch (WIKI.config.db.type) {
+    switch (WIKI.config.clouddb.type) {
       case 'postgres':
         dbClient = 'pg'
 
@@ -118,14 +119,14 @@ module.exports = {
         break
       case 'sqlite':
         dbClient = 'sqlite3'
-        dbConfig = { filename: WIKI.config.db.storage }
+        dbConfig = { filename: WIKI.config.clouddb.storage }
         break
       default:
         WIKI.logger.error('Invalid DB Type')
         process.exit(1)
     }
 
-    // Initialize Knex
+    // Initialize Cloud Knex
     this.knex = Knex({
       client: dbClient,
       useNullAsDefault: true,
@@ -135,7 +136,7 @@ module.exports = {
         ...WIKI.config.pool,
         async afterCreate(conn, done) {
           // -> Set Connection App Name
-          switch (WIKI.config.db.type) {
+          switch (WIKI.config.clouddb.type) {
             case 'postgres':
               await conn.query(`set application_name = 'Wiki.js'`)
               done()
@@ -153,12 +154,17 @@ module.exports = {
       debug: WIKI.IS_DEBUG
     })
 
-    Objection.Model.knex(this.knex)
+    // Objection.Model.knex(this.knex)
 
     // Load DB Models
 
-    const models = require('../models'); // autoload(path.join(WIKI.SERVERPATH, 'models'))
+    var models = require('../models'); // autoload(path.join(WIKI.SERVERPATH, 'models'))
     // console.log('.......', models)
+    var keys = Object.keys(models)
+    keys.forEach(key=>{
+        models[key].bindKnex(self.knex)
+    })
+    WIKI.cloud = models;
 
     // Set init tasks
     let conAttempts = 0
@@ -166,18 +172,17 @@ module.exports = {
       // -> Attempt initial connection
       async connect() {
         try {
-          WIKI.logger.info('Connecting to database...')
+          WIKI.logger.info('[Cloud] Connecting to database...')
           await self.knex.raw('SELECT 1 + 1;')
-          WIKI.kernel.syncServer();
-          WIKI.logger.info('Database Connection Successful [ OK ]')
+          WIKI.logger.info('[Cloud] Database Connection Successful [ OK ]')
         } catch (err) {
           if (conAttempts < 10) {
             if (err.code) {
-              WIKI.logger.error(`Database Connection Error: ${err.code} ${err.address}:${err.port}`)
+              WIKI.logger.error(`[Cloud] Database Connection Error: ${err.code} ${err.address}:${err.port}`)
             } else {
-              WIKI.logger.error(`Database Connection Error: ${err.message}`)
+              WIKI.logger.error(`[Cloud] Database Connection Error: ${err.message}`)
             }
-            WIKI.logger.warn(`Will retry in 3 seconds... [Attempt ${++conAttempts} of 10]`)
+            WIKI.logger.warn(`[Cloud] Will retry in 3 seconds... [Attempt ${++conAttempts} of 10]`)
             await new Promise(resolve => setTimeout(resolve, 3000))
             await initTasks.connect()
           } else {
@@ -208,10 +213,9 @@ module.exports = {
 
     // Perform init tasks
 
-    WIKI.logger.info(`Using database driver ${dbClient} for ${WIKI.config.db.type} [ OK ]`)
+    WIKI.logger.info(`[Cloud] Using database driver ${dbClient} for ${WIKI.config.clouddb.type} [ OK ]`)
     this.onReady = Promise.each(initTasksQueue, t => t()).return(true)
 
-    // WIKI.cloudModels = this.initCloud();
     return {
       ...this,
       ...models
@@ -224,7 +228,7 @@ module.exports = {
     const useHA = (WIKI.config.ha === true || WIKI.config.ha === 'true' || WIKI.config.ha === 1 || WIKI.config.ha === '1')
     if (!useHA) {
       return
-    } else if (WIKI.config.db.type !== 'postgres') {
+    } else if (WIKI.config.clouddb.type !== 'postgres') {
       WIKI.logger.warn(`Database engine doesn't support pub/sub. Will not handle concurrent instances: [ DISABLED ]`)
       return
     }
@@ -251,7 +255,7 @@ module.exports = {
 
     WIKI.auth.subscribeToEvents()
     WIKI.configSvc.subscribeToEvents()
-    WIKI.models.pages.subscribeToEvents()
+    // WIKI.models.pages.subscribeToEvents()
 
     WIKI.logger.info(`High-Availability Listener initialized successfully: [ OK ]`)
   },
@@ -272,10 +276,10 @@ module.exports = {
    * @param {object} value Payload of the event
    */
   notifyViaDB(event, value) {
-    WIKI.models.listener.publish('wiki', {
-      source: WIKI.INSTANCE_ID,
-      event,
-      value
-    })
+    // WIKI.models.listener.publish('wiki', {
+    //   source: WIKI.INSTANCE_ID,
+    //   event,
+    //   value
+    // })
   }
 }

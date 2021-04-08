@@ -44,6 +44,7 @@ module.exports = class Page extends Model {
         publishEndDate: {type: 'string'},
         content: {type: 'string'},
         contentType: {type: 'string'},
+        isSynced: {type: 'boolean'},
 
         createdAt: {type: 'string'},
         updatedAt: {type: 'string'}

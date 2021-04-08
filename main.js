@@ -6,7 +6,7 @@ var winGlobal;
 require('./server/index.js')
 
 global.WIKI.serverEvent.on('success', ()=> {
-    setTimeout(() => winGlobal.loadURL('http://localhost:3456'), 500);
+    setTimeout(() => winGlobal.loadURL('http://localhost:3456'), 5000);
 });
 
 function createWindow() {

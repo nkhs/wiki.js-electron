@@ -43,6 +43,7 @@ module.exports = {
 
     this.servers.http.on('listening', () => {
       WIKI.logger.info('HTTP Server: [ RUNNING ]')
+      WIKI.serverEvent.emit('success', 'ok');
     })
 
     this.servers.http.on('connection', conn => {
