@@ -60,14 +60,14 @@ module.exports = {
       var mac = (await macaddress.one()) + '';
       const serverPages = await db.pages.findAll({
         where: {
-          [Op.or]: [
-            {
-              localSynced: {
-                [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
-              },
-            },
-            { id: { [Op.notIn]: localPages.map((page) => page.id) } },
-          ],
+        //   [Op.or]: [
+        //     {
+        //       localSynced: {
+        //         [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
+        //       },
+        //     },
+        //     { id: { [Op.notIn]: localPages.map((page) => page.id) } },
+        //   ],
         },
       });
 
