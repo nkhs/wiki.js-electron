@@ -55,23 +55,26 @@ module.exports = {
 
       WIKI.logger.info('============= Sync To Local ============');
       localPages = await WIKI.models.pages.query().select('*').where({});
-      console.log('dd', localPages.map((page) => page.id))
+      console.log(
+        'dd',
+        localPages.map((page) => page.id),
+      );
       var macaddress = require('macaddress');
       var mac = (await macaddress.one()) + '';
       const serverPages = await db.pages.findAll({
         where: {
-        //   [Op.or]: [
-        //     {
-        //       localSynced: {
-        //         [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
-        //       },
-        //     },
-        //     { id: { [Op.notIn]: localPages.map((page) => page.id) } },
-        //   ],
+          [Op.or]: [
+            // {
+            //   localSynced: {
+            //     [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
+            //   },
+            // },
+            { id: { [Op.notIn]: localPages.map((page) => page.id) } },
+          ],
         },
       });
 
-      console.log('serverPages', serverPages)
+      console.log('serverPages', serverPages);
       for (const page of serverPages) {
         var clonedPage = JSON.parse(JSON.stringify(page));
         // console.log(clonedPage);
