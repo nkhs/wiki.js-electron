@@ -55,6 +55,7 @@ module.exports = {
 
       WIKI.logger.info('============= Sync To Local ============');
       localPages = await WIKI.models.pages.query().select('*').where({});
+      console.log('dd', localPages.map((page) => page.id))
       var macaddress = require('macaddress');
       var mac = (await macaddress.one()) + '';
       const serverPages = await db.pages.findAll({
