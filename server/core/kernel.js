@@ -54,13 +54,19 @@ module.exports = {
       }
 
       WIKI.logger.info('============= Sync To Local ============');
+      localPages = await WIKI.models.pages.query().select('*').where({});
       var macaddress = require('macaddress');
       var mac = (await macaddress.one()) + '';
       const serverPages = await db.pages.findAll({
         where: {
-          localSynced: {
-            [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
-          },
+          [Op.or]: [
+            {
+              localSynced: {
+                [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
+              },
+            },
+            { id: { [Op.notIn]: localPages.map((page) => page.id) } },
+          ],
         },
       });
 
