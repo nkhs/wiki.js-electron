@@ -61,17 +61,22 @@ module.exports = {
       );
       var macaddress = require('macaddress');
       var mac = (await macaddress.one()) + '';
-      const serverPages = await db.pages.findAll({
-        where: {
+      var pageWhere = {};
+      if (localPages.length) {
+        pageWhere = {
           [Op.or]: [
-            // {
-            //   localSynced: {
-            //     [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
-            //   },
-            // },
+            {
+              localSynced: {
+                [Op.or]: [{ [Op.eq]: null }, { [Op.notLike]: `%${mac}%` }],
+              },
+            },
             { id: { [Op.notIn]: localPages.map((page) => page.id) } },
           ],
-        },
+        };
+      }
+
+      const serverPages = await db.pages.findAll({
+        where: pageWhere,
       });
 
       console.log('serverPages', serverPages);
