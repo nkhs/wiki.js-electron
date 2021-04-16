@@ -71,6 +71,7 @@ module.exports = {
         },
       });
 
+      console.log('serverPages', serverPages)
       for (const page of serverPages) {
         var clonedPage = JSON.parse(JSON.stringify(page));
         // console.log(clonedPage);
