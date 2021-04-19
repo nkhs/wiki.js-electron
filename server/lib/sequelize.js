@@ -5,7 +5,7 @@ const config = {
 //   dbConfig: {
     dialect: 'mysql',
 
-    logging: true,
+    logging: false,
     database: WIKI.config.clouddb.db.toString(),
     host: WIKI.config.clouddb.host.toString(),
     username: WIKI.config.clouddb.user.toString(),

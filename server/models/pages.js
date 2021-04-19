@@ -47,7 +47,8 @@ module.exports = class Page extends Model {
         isSynced: {type: 'boolean'},
 
         createdAt: {type: 'string'},
-        updatedAt: {type: 'string'}
+        updatedAt: {type: 'string'},
+        isDeleted: {type: 'boolean'}
       }
     }
   }

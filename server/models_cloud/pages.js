@@ -25,18 +25,19 @@ module.exports = (sequelize, DataTypes) => {
 
       createdAt: { type: DataTypes.STRING },
       updatedAt: { type: DataTypes.STRING },
+      deletedAt: { type: DataTypes.STRING },
     },
     {
       sequelize,
       modelName: 'pages',
-      timestamps: false
+      timestamps: false,
       // defaultScope: {
       //     attributes: { exclude: ["createdAt", "updatedAt"] }
       // }
     },
   );
-//   pages.sync({
-//     force: true,
-//   });
+  //   pages.sync({
+  //     force: true,
+  //   });
   return pages;
 };
