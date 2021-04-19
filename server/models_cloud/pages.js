@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
 
       createdAt: { type: DataTypes.STRING },
       updatedAt: { type: DataTypes.STRING },
-      deletedAt: { type: DataTypes.STRING },
+      isDeleted: { type: DataTypes.BOOLEAN },
     },
     {
       sequelize,

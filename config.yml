@@ -51,7 +51,7 @@ db:
     # passphrase: xyz123
 
   # SQLite only:
-  storage: ./database2.sqlite
+  storage: ./server_config/database.sqlite
 
 clouddb:
   type: mysql
@@ -77,7 +77,7 @@ clouddb:
     # passphrase: xyz123
 
   # SQLite only:
-  storage: ./database.sqlite
+  storage: ./server_config/database.sqlite
 
 #######################################################################
 # ADVANCED OPTIONS                                                    #
