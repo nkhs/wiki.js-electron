@@ -41,17 +41,17 @@ module.exports = {
       //   var localPages = await WIKI.models[name].query().select('*').where({ isSynced: false });
       var localPages = await WIKI.models.knex.table(name).where({ isSynced: false });
 
-      WIKI.logger.info('local data size ' + localPages.length);
+      WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'local data size ' + localPages.length);
 
       for (const page of localPages) {
         await db[name].upsert(page);
-        WIKI.logger.info('Uploaded to server db', page.id);
+        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'Uploaded to server db', page.id);
         page.isSynced = true;
-        WIKI.logger.info('updateing page', page);
+        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'updateing page', page);
         await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
       }
 
-      WIKI.logger.info('============= Sync To Local ============');
+      WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + '============= Sync To Local ============');
       localPages = await WIKI.models.knex.table(name).where({});
 
       var macaddress = require('macaddress');
