@@ -32,6 +32,9 @@ module.exports = {
   },
   async syncTable(name) {
     try {
+      var macaddress = require('macaddress');
+      var mac = (await macaddress.one()) + '';
+
       const db = require('../models_cloud');
       const Sequelize = require('sequelize');
       const Op = Sequelize.Op;
@@ -47,16 +50,16 @@ module.exports = {
       );
 
       for (const page of localPages) {
+        page.localSynced = `${mac}`;
         await db[name].upsert(page);
         // WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'Uploaded to server db ' + page.id);
         page.isSynced = true;
+        delete page.localSynced;
         await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
       }
 
       localPages = await WIKI.models.knex.table(name).where({});
 
-      var macaddress = require('macaddress');
-      var mac = (await macaddress.one()) + '';
       var pageWhere = {};
       if (localPages.length) {
         pageWhere = {
