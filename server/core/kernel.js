@@ -30,10 +30,7 @@ module.exports = {
 
     this.bootMaster();
   },
-  /**
-   * Sync To Cloud
-   */
-  async syncServer() {
+  async syncTable(name) {
     try {
       const db = require('../models_cloud');
       const Sequelize = require('sequelize');
@@ -41,24 +38,22 @@ module.exports = {
 
       WIKI.logger.info('============= Sync To Server ============');
 
-      var localPages = await WIKI.models.pages.query().select('*').where({ isSynced: false });
+      //   var localPages = await WIKI.models[name].query().select('*').where({ isSynced: false });
+      var localPages = await WIKI.models.knex.table(name).where({ isSynced: false });
 
       WIKI.logger.info('local data size ' + localPages.length);
 
       for (const page of localPages) {
-        await db.pages.upsert(page);
+        await db[name].upsert(page);
         WIKI.logger.info('Uploaded to server db', page.id);
         page.isSynced = true;
         WIKI.logger.info('updateing page', page);
-        await WIKI.models.pages.query().patch(page).where('id', page.id);
+        await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
       }
 
       WIKI.logger.info('============= Sync To Local ============');
-      localPages = await WIKI.models.pages.query().select('*').where({});
-      console.log(
-        'dd',
-        localPages.map((page) => page.id),
-      );
+      localPages = await WIKI.models.knex.table(name).where({});
+
       var macaddress = require('macaddress');
       var mac = (await macaddress.one()) + '';
       var pageWhere = {};
@@ -75,7 +70,7 @@ module.exports = {
         };
       }
 
-      const serverPages = await db.pages.findAll({
+      const serverPages = await db[name].findAll({
         where: pageWhere,
       });
 
@@ -92,25 +87,33 @@ module.exports = {
         if (clonedPage.path == null) clonedPage.path = '';
         delete clonedPage.localSynced;
 
-        var onePage = await WIKI.models.pages.query().select('*').where({ id: page.id });
+        var onePage = await WIKI.models.knex.table(name).select('*').where({ id: page.id });
 
         if (onePage.length > 0) {
           //   await WIKI.models.pages.query().patch(clonedPage).where('id', page.id);
         } else {
-          WIKI.logger.info(chalk.red('SYNC') + ': INSERT', page.id);
-          await WIKI.models.pages.query().insert(clonedPage);
+          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + ': INSERT', page.id);
+          await WIKI.models.knex.table(name).insert(clonedPage);
         }
 
         page.localSynced = page.localSynced + `,${mac}`;
         await page.update({ localSynced: page.localSynced });
         // console.log('page', page);
-        WIKI.logger.info(chalk.red('SYNC') + ': Downloaded', page.id);
+        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + ': Downloaded', page.id);
       }
       // db.sync();
-      console.log(chalk.red('SYNC'), 'server data size ' + serverPages.length + ' mac = ' + mac);
+      console.log(chalk.red('SYNC') + chalk.blue(name), 'server data size ' + serverPages.length + ' mac = ' + mac);
+      //*/
     } catch (e) {
-      console.log(chalk.red('SYNC'), e);
+      console.log(chalk.red('SYNC') + chalk.blue(name), e, name);
     }
+  },
+  /**
+   * Sync To Cloud
+   */
+  async syncServer() {
+    this.syncTable('pages');
+    this.syncTable('pageTree');
   },
   /**
    * Pre-Master Boot Sequence

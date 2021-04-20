@@ -132,6 +132,7 @@ module.exports = {
               break
           }
         })
+        console.log('results')
       results = _.filter(results, r => {
         return WIKI.auth.checkAccess(context.req.user, ['read:pages'], {
           path: r.path,
@@ -221,6 +222,7 @@ module.exports = {
      * FETCH PAGE TREE
      */
     async tree (obj, args, context, info) {
+        
       let curPage = null
 
       if (!args.locale) { args.locale = WIKI.config.lang.code }

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       path: { type: DataTypes.STRING },
       hash: { type: DataTypes.STRING },
       title: { type: DataTypes.STRING },
+      toc: { type: DataTypes.STRING },
       description: { type: DataTypes.STRING },
       isPublished: { type: DataTypes.BOOLEAN },
       privateNS: { type: DataTypes.STRING },
@@ -22,10 +23,17 @@ module.exports = (sequelize, DataTypes) => {
 
       isSynced: { type: DataTypes.BOOLEAN }, //updated to cloud
       localSynced: { type: DataTypes.TEXT }, // updated to local
+      render: { type: DataTypes.STRING },
+      authorId: { type: DataTypes.INTEGER },
+
+      creatorId: { type: DataTypes.INTEGER },
+
+      isPrivate: { type: DataTypes.BOOLEAN },
 
       createdAt: { type: DataTypes.STRING },
       updatedAt: { type: DataTypes.STRING },
       isDeleted: { type: DataTypes.BOOLEAN },
+      editorKey: { type: DataTypes.STRING },
     },
     {
       sequelize,
