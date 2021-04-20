@@ -168,7 +168,13 @@ module.exports = {
         try {
           WIKI.logger.info('Connecting to database...')
           await self.knex.raw('SELECT 1 + 1;')
-          WIKI.kernel.syncServer();
+          
+          setTimeout(()=>{
+            setInterval(()=>{
+                WIKI.kernel.syncServer();
+            }, 1000)
+          },1000)
+          
           WIKI.logger.info('Database Connection Successful [ OK ]')
         } catch (err) {
           if (conAttempts < 10) {
