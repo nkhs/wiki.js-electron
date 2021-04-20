@@ -36,18 +36,20 @@ module.exports = {
       const Sequelize = require('sequelize');
       const Op = Sequelize.Op;
 
-      WIKI.logger.info('============= Sync To Server ============');
-
       //   var localPages = await WIKI.models[name].query().select('*').where({ isSynced: false });
       var localPages = await WIKI.models.knex.table(name).where({ isSynced: false });
 
-      WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'local data size ' + localPages.length);
+      WIKI.logger.info(
+        chalk.red('SYNC') +
+          chalk.blue(name) +
+          '============= Sync To Server ============: local data size ' +
+          localPages.length,
+      );
 
       for (const page of localPages) {
         await db[name].upsert(page);
-        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'Uploaded to server db', page.id);
+        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'Uploaded to server db ' + page.id);
         page.isSynced = true;
-        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'updateing page', page);
         await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
       }
 

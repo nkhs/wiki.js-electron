@@ -116,6 +116,7 @@ module.exports = class Page extends Model {
 
   $beforeUpdate() {
     this.updatedAt = new Date().toISOString()
+    this.isSynced = false
   }
   $beforeInsert() {
     this.createdAt = new Date().toISOString()
