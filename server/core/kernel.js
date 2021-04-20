@@ -77,14 +77,16 @@ module.exports = {
       for (const page of serverPages) {
         var clonedPage = JSON.parse(JSON.stringify(page));
         // console.log(clonedPage);
-        if (clonedPage.publishStartDate) clonedPage.publishStartDate = clonedPage.publishStartDate.toString();
-        else clonedPage.publishStartDate = '';
+        if (name == 'pages') {
+          if (clonedPage.publishStartDate) clonedPage.publishStartDate = clonedPage.publishStartDate.toString();
+          else clonedPage.publishStartDate = '';
 
-        if (clonedPage.publishEndDate) clonedPage.publishEndDate = clonedPage.publishEndDate.toString();
-        else clonedPage.publishEndDate = '';
-        if (clonedPage.privateNS == null) clonedPage.privateNS = '';
-        if (clonedPage.content == null) clonedPage.content = '';
-        if (clonedPage.path == null) clonedPage.path = '';
+          if (clonedPage.publishEndDate) clonedPage.publishEndDate = clonedPage.publishEndDate.toString();
+          else clonedPage.publishEndDate = '';
+          if (clonedPage.privateNS == null) clonedPage.privateNS = '';
+          if (clonedPage.content == null) clonedPage.content = '';
+          if (clonedPage.path == null) clonedPage.path = '';
+        }
         delete clonedPage.localSynced;
 
         var onePage = await WIKI.models.knex.table(name).select('*').where({ id: page.id });
