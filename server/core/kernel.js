@@ -41,19 +41,18 @@ module.exports = {
 
       WIKI.logger.info(
         chalk.red('SYNC') +
-          chalk.blue(name) +
-          '============= Sync To Server ============: local data size ' +
+          chalk.blue(_.padStart(name, 10)) +
+          '============= Sync To Server =========== ' +
           localPages.length,
       );
 
       for (const page of localPages) {
         await db[name].upsert(page);
-        // WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'Uploaded to server db ' + page.id);
+        // WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'Uploaded to server db ' + page.id);
         page.isSynced = true;
         await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
       }
 
-      WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + '============= Sync To Local ============');
       localPages = await WIKI.models.knex.table(name).where({});
 
       var macaddress = require('macaddress');
@@ -75,7 +74,12 @@ module.exports = {
       const serverPages = await db[name].findAll({
         where: pageWhere,
       });
-
+      WIKI.logger.info(
+        chalk.red('SYNC') +
+          chalk.blue(_.padStart(name, 10)) +
+          '============= Sync To Local ============ ' +
+          serverPages.length,
+      );
       for (const page of serverPages) {
         var clonedPage = JSON.parse(JSON.stringify(page));
         // console.log(clonedPage);
@@ -96,20 +100,23 @@ module.exports = {
         if (onePage.length > 0) {
           //   await WIKI.models.pages.query().patch(clonedPage).where('id', page.id);
         } else {
-          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + ': INSERT', page.id);
+          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': INSERT', page.id);
           await WIKI.models.knex.table(name).insert(clonedPage);
         }
 
         page.localSynced = page.localSynced + `,${mac}`;
         await page.update({ localSynced: page.localSynced });
         // console.log('page', page);
-        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + ': Downloaded', page.id);
+        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': Downloaded', page.id);
       }
       // db.sync();
-      console.log(chalk.red('SYNC') + chalk.blue(name), 'server data size ' + serverPages.length + ' mac = ' + mac);
+      console.log(
+        chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)),
+        'server data size ' + serverPages.length + ' mac = ' + mac,
+      );
       //*/
     } catch (e) {
-      console.log(chalk.red('SYNC') + chalk.blue(name), e, name);
+      console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
     }
   },
   /**
