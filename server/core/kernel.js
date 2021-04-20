@@ -48,7 +48,7 @@ module.exports = {
 
       for (const page of localPages) {
         await db[name].upsert(page);
-        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'Uploaded to server db ' + page.id);
+        // WIKI.logger.info(chalk.red('SYNC') + chalk.blue(name) + 'Uploaded to server db ' + page.id);
         page.isSynced = true;
         await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
       }

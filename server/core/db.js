@@ -172,7 +172,7 @@ module.exports = {
           setTimeout(()=>{
             setInterval(()=>{
                 WIKI.kernel.syncServer();
-            }, 1000)
+            }, 10000)
           },1000)
           
           WIKI.logger.info('Database Connection Successful [ OK ]')
