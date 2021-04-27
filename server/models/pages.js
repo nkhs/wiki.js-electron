@@ -777,12 +777,13 @@ module.exports = class Page extends Model {
         } else {
           // -> No render? Possible duplicate issue
           /* TODO: Detect duplicate and delete */
-          //debug
+          //Tring once more
           await WIKI.models.pages.renderPage(page)
-          if(page.render){
-              console.log('Success')
+          if (page.render) {
+             console.log('Success')
+          } else {
+            throw new Error('Error while fetching page. Duplicate entry detected. Reload the page to try again.')
           }
-          throw new Error('Error while fetching page. Duplicate entry detected. Reload the page to try again.')
         }
       }
     }
