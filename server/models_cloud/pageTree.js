@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       privateNS: { type: DataTypes.STRING },
       parent: { type: DataTypes.INTEGER },
       pageId: { type: DataTypes.INTEGER },
-      localCode: { type: DataTypes.STRING },
+      localeCode: { type: DataTypes.STRING },
       ancestors: { type: DataTypes.JSON },
 
       isSynced: { type: DataTypes.BOOLEAN }, //updated to cloud
