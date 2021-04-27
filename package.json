@@ -2,7 +2,7 @@
   "name": "wiki",
   "version": "2.5.197",
   "description": "Wiki.js with Electron",
-  "main": "main.js",
+  "main": "server/index.js",
   "dev": true,
   "scripts": {
     "start": "electron .",
