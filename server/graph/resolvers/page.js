@@ -258,6 +258,7 @@ module.exports = {
           }
         }
       }).orderBy([{ column: 'isFolder', order: 'desc' }, 'title'])
+      console.log(results)
       return results.filter(r => {
         return WIKI.auth.checkAccess(context.req.user, ['read:pages'], {
           path: r.path,
