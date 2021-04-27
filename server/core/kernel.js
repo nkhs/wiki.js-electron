@@ -50,12 +50,16 @@ module.exports = {
       );
 
       for (const page of localPages) {
-        page.localSynced = `${mac}`;
-        await db[name].upsert(page);
-        // WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'Uploaded to server db ' + page.id);
-        page.isSynced = true;
-        delete page.localSynced;
-        await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
+        try {
+          page.localSynced = `${mac}`;
+          await db[name].upsert(page);
+          // WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'Uploaded to server db ' + page.id);
+          page.isSynced = true;
+          delete page.localSynced;
+          await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
+        } catch (e) {
+          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'error' + e.toString());
+        }
       }
 
       localPages = await WIKI.models.knex.table(name).where({});
@@ -84,33 +88,37 @@ module.exports = {
           serverPages.length,
       );
       for (const page of serverPages) {
-        var clonedPage = JSON.parse(JSON.stringify(page));
-        // console.log(clonedPage);
-        if (name == 'pages') {
-          if (clonedPage.publishStartDate) clonedPage.publishStartDate = clonedPage.publishStartDate.toString();
-          else clonedPage.publishStartDate = '';
+        try {
+          var clonedPage = JSON.parse(JSON.stringify(page));
+          // console.log(clonedPage);
+          if (name == 'pages') {
+            if (clonedPage.publishStartDate) clonedPage.publishStartDate = clonedPage.publishStartDate.toString();
+            else clonedPage.publishStartDate = '';
 
-          if (clonedPage.publishEndDate) clonedPage.publishEndDate = clonedPage.publishEndDate.toString();
-          else clonedPage.publishEndDate = '';
-          if (clonedPage.privateNS == null) clonedPage.privateNS = '';
-          if (clonedPage.content == null) clonedPage.content = '';
-          if (clonedPage.path == null) clonedPage.path = '';
+            if (clonedPage.publishEndDate) clonedPage.publishEndDate = clonedPage.publishEndDate.toString();
+            else clonedPage.publishEndDate = '';
+            if (clonedPage.privateNS == null) clonedPage.privateNS = '';
+            if (clonedPage.content == null) clonedPage.content = '';
+            if (clonedPage.path == null) clonedPage.path = '';
+          }
+          delete clonedPage.localSynced;
+
+          var onePage = await WIKI.models.knex.table(name).select('*').where({ id: page.id });
+
+          if (onePage.length > 0) {
+            //   await WIKI.models.pages.query().patch(clonedPage).where('id', page.id);
+          } else {
+            WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': INSERT', page.id);
+            await WIKI.models.knex.table(name).insert(clonedPage);
+          }
+
+          page.localSynced = page.localSynced + `,${mac}`;
+          await page.update({ localSynced: page.localSynced });
+          // console.log('page', page);
+          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': Downloaded', page.id);
+        } catch (e) {
+          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'error' + e.toString());
         }
-        delete clonedPage.localSynced;
-
-        var onePage = await WIKI.models.knex.table(name).select('*').where({ id: page.id });
-
-        if (onePage.length > 0) {
-          //   await WIKI.models.pages.query().patch(clonedPage).where('id', page.id);
-        } else {
-          WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': INSERT', page.id);
-          await WIKI.models.knex.table(name).insert(clonedPage);
-        }
-
-        page.localSynced = page.localSynced + `,${mac}`;
-        await page.update({ localSynced: page.localSynced });
-        // console.log('page', page);
-        WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': Downloaded', page.id);
       }
       // db.sync();
       console.log(

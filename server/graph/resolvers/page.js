@@ -222,6 +222,7 @@ module.exports = {
      * FETCH PAGE TREE
      */
     async tree (obj, args, context, info) {
+        console.log('--debug--')
         
       let curPage = null
 
@@ -258,7 +259,7 @@ module.exports = {
           }
         }
       }).orderBy([{ column: 'isFolder', order: 'desc' }, 'title'])
-      console.log(results)
+    //   console.log(results)
       return results.filter(r => {
         return WIKI.auth.checkAccess(context.req.user, ['read:pages'], {
           path: r.path,
@@ -376,6 +377,7 @@ module.exports = {
           ...args,
           user: context.req.user
         })
+        WIKI.kernel.syncServer();
         return {
           responseResult: graphHelper.generateSuccess('Page created successfully.'),
           page
