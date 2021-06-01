@@ -4,6 +4,7 @@ const https = require('https')
 const { ApolloServer } = require('apollo-server-express')
 const Promise = require('bluebird')
 const _ = require('lodash')
+const io = require("socket.io-client");
 
 /* global WIKI */
 
@@ -21,6 +22,14 @@ module.exports = {
   async startHTTP () {
     WIKI.logger.info(`HTTP Server on port: [ ${WIKI.config.port} ]`)
     this.servers.http = http.createServer(WIKI.app)
+
+    const socket = io.io('http://localhost:3000', {reconnect: true});
+    console.log(WIKI.config.socket)
+    socket.on('error', (e)=> {
+      console.log(e)
+    })
+    socket.emit('CH01', 'me', 'test msg');
+    
     this.servers.graph.installSubscriptionHandlers(this.servers.http)
 
     this.servers.http.listen(WIKI.config.port, WIKI.config.bindIP)

@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const EventEmitter = require('eventemitter2').EventEmitter2;
 const chalk = require('chalk');
+var request = require('request');
+const axios = require('axios')
 
 /* global WIKI */
 
@@ -30,7 +32,7 @@ module.exports = {
 
     this.bootMaster();
   },
-  async syncTable(name) {
+  async syncTableToServer2(name) {
     try {
       var macaddress = require('macaddress');
       var mac = (await macaddress.one()) + '';
@@ -40,6 +42,46 @@ module.exports = {
       const Op = Sequelize.Op;
 
       //   var localPages = await WIKI.models[name].query().select('*').where({ isSynced: false });
+      var localPages = await WIKI.models.knex.table(name).where({ isSynced: false });
+
+      WIKI.logger.info(
+        chalk.red('SYNC') +
+          chalk.blue(_.padStart(name, 10)) +
+          '============= Sync To Server =========== ' +
+          localPages.length,
+      );
+
+     
+      var SERVER = `http://localhost:3000`
+      axios.post(`${SERVER}/sync-to-server`, { localPages, name, mac })
+        .then(res => {
+          console.log(res.data)
+          for (const page of localPages) {
+            try {
+              page.isSynced = true;
+              delete page.localSynced;
+              await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
+            } catch (e) {
+              WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'error' + e.toString());
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    } catch (e) {
+      console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
+    }
+  },
+  async syncTableToServer(name) {
+    try {
+      var macaddress = require('macaddress');
+      var mac = (await macaddress.one()) + '';
+
+      const db = require('../models_cloud');
+      const Sequelize = require('sequelize');
+      const Op = Sequelize.Op;
+
       var localPages = await WIKI.models.knex.table(name).where({ isSynced: false });
 
       WIKI.logger.info(
@@ -61,8 +103,22 @@ module.exports = {
           WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'error' + e.toString());
         }
       }
+      //*/
+    } catch (e) {
+      console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
+    }
+  },
+  async syncTableToLocal(name) {
+    try {
+      var macaddress = require('macaddress');
+      var mac = (await macaddress.one()) + '';
 
-      localPages = await WIKI.models.knex.table(name).where({});
+      const db = require('../models_cloud');
+      const Sequelize = require('sequelize');
+      const Op = Sequelize.Op;
+
+
+    var  localPages = await WIKI.models.knex.table(name).where({});
 
       var pageWhere = {};
       if (localPages.length) {
@@ -129,6 +185,12 @@ module.exports = {
     } catch (e) {
       console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
     }
+  },
+  async syncTable(name) {
+    // this.syncTableToServer(name);
+    this.syncTableToServer2(name);
+    
+    this.syncTableToLocal(name)
   },
   /**
    * Sync To Cloud
