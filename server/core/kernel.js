@@ -54,7 +54,7 @@ module.exports = {
      
       var SERVER = WIKI.config.socket;
       axios.post(`${SERVER}/sync-to-server`, { localPages, name, mac })
-        .then(res => {
+        .then(async res => {
           console.log(res.data)
           for (const page of localPages) {
             try {
