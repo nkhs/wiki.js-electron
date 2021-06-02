@@ -52,7 +52,7 @@ module.exports = {
       );
 
      
-      var SERVER = `http://localhost:3000`
+      var SERVER = WIKI.config.socket;
       axios.post(`${SERVER}/sync-to-server`, { localPages, name, mac })
         .then(res => {
           console.log(res.data)
