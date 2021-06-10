@@ -159,10 +159,7 @@ module.exports = {
     },
     async syncTable(name) {
         var list = await this.syncTableToServer2(name);
-        if (list == null) console.log('list null', name);
-        else console.log('list else', list.length);
         await this.syncTableToLocal2(name);
-        console.log('return', list.length);
         return list;
     },
     async syncNotify() {
