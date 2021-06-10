@@ -167,7 +167,7 @@ module.exports = {
      * Sync To Cloud
      */
     async syncServer() {
-        // this.syncTable('pages');
+        this.syncTable('pages');
         // this.syncTable('pageTree');
         // this.syncTable('assets');
         // this.syncTable('assetFolders');

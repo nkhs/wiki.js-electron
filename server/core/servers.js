@@ -5,7 +5,7 @@ const { ApolloServer } = require('apollo-server-express');
 const Promise = require('bluebird');
 const _ = require('lodash');
 const io = require('socket.io-client');
-
+const macaddress = require('macaddress');
 /* global WIKI */
 
 module.exports = {
@@ -28,8 +28,12 @@ module.exports = {
         socket.on('error', (e) => {
             console.log(e);
         });
-        socket.on('sync-to-server', (e) => {
+        socket.on('sync-to-server', async (e) => {
             console.log('SOCKET: sync-to-server ', e);
+            const { mac } = e;
+            if (mac == (await macaddress.one()) + '') {
+                console.log('equal mac');
+            }
         });
 
         this.servers.graph.installSubscriptionHandlers(this.servers.http);
