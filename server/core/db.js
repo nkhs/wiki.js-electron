@@ -170,9 +170,10 @@ module.exports = {
           await self.knex.raw('SELECT 1 + 1;')
           
           setTimeout(()=>{
-            setInterval(()=>{
-                WIKI.kernel.syncServer();
-            }, 10000)
+            WIKI.kernel.syncServer();
+            // setInterval(()=>{
+            //     WIKI.kernel.syncServer();
+            // }, 10000)
           },100)
           
           WIKI.logger.info('Database Connection Successful [ OK ]')

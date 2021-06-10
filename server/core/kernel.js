@@ -48,13 +48,13 @@ module.exports = {
             );
             localPages = localPages.map((item) => ({ ...item, localSynced: null }));
             var SERVER = WIKI.config.socket;
+            if (localPages.length == 0) return;
             axios
                 .post(`${SERVER}/sync-to-server`, { localPages, name, mac })
                 .then(async (res) => {
                     console.log(res.data);
                     for (const page of localPages) {
                         try {
-
                             page.isSynced = true;
                             delete page.localSynced;
                             await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
@@ -168,10 +168,10 @@ module.exports = {
      */
     async syncServer() {
         this.syncTable('pages');
-        // this.syncTable('pageTree');
-        // this.syncTable('assets');
-        // this.syncTable('assetFolders');
-        // this.syncTable('assetData');
+        this.syncTable('pageTree');
+        this.syncTable('assets');
+        this.syncTable('assetFolders');
+        this.syncTable('assetData');
     },
     /**
      * Pre-Master Boot Sequence

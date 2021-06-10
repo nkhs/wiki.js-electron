@@ -36,6 +36,7 @@ module.exports = {
                 return;
             }
             console.log('SOCKET: sync-to-server ', e);
+            WIKI.kernel.syncServer();
         });
 
         this.servers.graph.installSubscriptionHandlers(this.servers.http);
