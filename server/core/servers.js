@@ -28,7 +28,9 @@ module.exports = {
     socket.on('error', (e)=> {
       console.log(e)
     })
-    socket.emit('CH01', 'me', 'test msg');
+    socket.on('sync-to-server', (e)=> {
+      console.log('SOCKET: sync-to-server ',e)
+    })
     
     this.servers.graph.installSubscriptionHandlers(this.servers.http)
 

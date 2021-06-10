@@ -92,7 +92,7 @@ module.exports = {
                 .post(`${SERVER}/sync-to-local`, { localPages, name, mac })
                 .then(async (res) => {
                     var serverPages = res.data;
-                    console.log('serverPages', serverPages);
+                    // console.log('serverPages', serverPages);
 
                     WIKI.logger.info(
                         chalk.red('SYNC') +
@@ -161,17 +161,17 @@ module.exports = {
     },
     async syncTable(name) {
         this.syncTableToServer2(name);
-        // this.syncTableToLocal2(name);
+        this.syncTableToLocal2(name);
     },
     /**
      * Sync To Cloud
      */
     async syncServer() {
         this.syncTable('pages');
-        // this.syncTable('pageTree');
-        // this.syncTable('assets');
-        // this.syncTable('assetFolders');
-        // this.syncTable('assetData');
+        this.syncTable('pageTree');
+        this.syncTable('assets');
+        this.syncTable('assetFolders');
+        this.syncTable('assetData');
     },
     /**
      * Pre-Master Boot Sequence
