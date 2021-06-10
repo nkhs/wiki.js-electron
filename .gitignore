@@ -1,5 +1,6 @@
 node_modules
 build
 *.sqlite
+server_config/*.sqlite
 *.zip
 *.rar
