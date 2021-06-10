@@ -100,10 +100,15 @@ module.exports = {
                             '============= Sync To Local ============ ' +
                             serverPages.length,
                     );
+
+                    WIKI.logger.info(
+                        chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)),
+                        'server data size ' + serverPages.length + ' mac = ' + mac,
+                    );
                     for (const page of serverPages) {
                         try {
                             var clonedPage = JSON.parse(JSON.stringify(page));
-                            // console.log(clonedPage);
+
                             if (name == 'pages') {
                                 if (clonedPage.publishStartDate)
                                     clonedPage.publishStartDate = clonedPage.publishStartDate.toString();
@@ -131,15 +136,6 @@ module.exports = {
                             }
 
                             // console.log('page', page);
-                            WIKI.logger.info(
-                                chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': Downloaded',
-                                page.id,
-                            );
-
-                            console.log(
-                                chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)),
-                                'server data size ' + serverPages.length + ' mac = ' + mac,
-                            );
                         } catch (e) {
                             WIKI.logger.info(
                                 chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'error' + e.toString(),
