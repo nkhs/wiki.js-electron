@@ -167,11 +167,11 @@ module.exports = {
      * Sync To Cloud
      */
     async syncServer() {
-        this.syncTable('pages');
-        this.syncTable('pageTree');
-        this.syncTable('assets');
-        this.syncTable('assetFolders');
-        this.syncTable('assetData');
+        // this.syncTable('pages');
+        // this.syncTable('pageTree');
+        // this.syncTable('assets');
+        // this.syncTable('assetFolders');
+        // this.syncTable('assetData');
     },
     /**
      * Pre-Master Boot Sequence

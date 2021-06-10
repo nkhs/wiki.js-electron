@@ -22,8 +22,8 @@ module.exports = {
     async startHTTP() {
         WIKI.logger.info(`HTTP Server on port: [ ${WIKI.config.port} ]`);
         this.servers.http = http.createServer(WIKI.app);
-
-        const socket = io.io('http://localhost:3000', { reconnect: true });
+        var SERVER = WIKI.config.socket;
+        const socket = io.io(SERVER, { reconnect: true });
         console.log(WIKI.config.socket);
         socket.on('error', (e) => {
             console.log(e);
