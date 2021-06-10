@@ -48,7 +48,7 @@ module.exports = {
             );
             localPages = localPages.map((item) => ({ ...item, localSynced: null }));
             var SERVER = WIKI.config.socket;
-            if (localPages.length == 0) return;
+            if (localPages.length == 0) return [];
             axios
                 .post(`${SERVER}/sync-to-server`, { localPages, name, mac })
                 .then(async (res) => {
@@ -69,9 +69,11 @@ module.exports = {
                     // console.error(error);
                     WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'API ERROR');
                 });
+            return localPages;
         } catch (e) {
             console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
         }
+        return [];
     },
     async syncTableToLocal2(name) {
         try {
@@ -156,18 +158,38 @@ module.exports = {
         }
     },
     async syncTable(name) {
-        this.syncTableToServer2(name);
-        this.syncTableToLocal2(name);
+        var list = await this.syncTableToServer2(name);
+        if (list == null) console.log('list null', name);
+        else console.log('list else', list.length);
+        await this.syncTableToLocal2(name);
+        console.log('return', list.length);
+        return list;
+    },
+    async syncNotify() {
+        try {
+            var macaddress = require('macaddress');
+            var mac = (await macaddress.one()) + '';
+            axios.post(`${SERVER}/sync-notify`, { mac }).then(async (res) => {});
+        } catch (e) {}
     },
     /**
      * Sync To Cloud
      */
     async syncServer() {
-        this.syncTable('pages');
-        this.syncTable('pageTree');
-        this.syncTable('assets');
-        this.syncTable('assetFolders');
-        this.syncTable('assetData');
+        var total = 0;
+        var list = await this.syncTable('pages');
+        total += list.length;
+        var list = await this.syncTable('pageTree');
+        total += list.length;
+        var list = await this.syncTable('assets');
+        total += list.length;
+        var list = await this.syncTable('assetFolders');
+        total += list.length;
+        var list = await this.syncTable('assetData');
+        total += list.length;
+
+        console.log('Total', total);
+        if (total) this.syncNotify();
     },
     /**
      * Pre-Master Boot Sequence
