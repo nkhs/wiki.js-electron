@@ -29,11 +29,13 @@ module.exports = {
             console.log(e);
         });
         socket.on('sync-to-server', async (e) => {
-            console.log('SOCKET: sync-to-server ', e);
+            if (e == null) return;
             const { mac } = e;
             if (mac == (await macaddress.one()) + '') {
                 console.log('equal mac');
+                return;
             }
+            console.log('SOCKET: sync-to-server ', e);
         });
 
         this.servers.graph.installSubscriptionHandlers(this.servers.http);
