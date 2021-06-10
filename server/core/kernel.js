@@ -46,7 +46,7 @@ module.exports = {
                     '============= Sync To Server =========== ' +
                     localPages.length,
             );
-
+            localPages = localPages.map((item) => ({ ...item, localSynced: null }));
             var SERVER = WIKI.config.socket;
             axios
                 .post(`${SERVER}/sync-to-server`, { localPages, name, mac })
@@ -54,6 +54,7 @@ module.exports = {
                     console.log(res.data);
                     for (const page of localPages) {
                         try {
+
                             page.isSynced = true;
                             delete page.localSynced;
                             await WIKI.models.knex.table(name).where({ id: page.id }).update(page);
@@ -65,7 +66,8 @@ module.exports = {
                     }
                 })
                 .catch((error) => {
-                    console.error(error);
+                    // console.error(error);
+                    WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'API ERROR');
                 });
         } catch (e) {
             console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
@@ -76,16 +78,22 @@ module.exports = {
             var macaddress = require('macaddress');
             var mac = (await macaddress.one()) + '';
 
-            const db = require('../models_cloud');
-            // const Sequelize = require('sequelize');
-            // const Op = Sequelize.Op;
             var localPages = await WIKI.models.knex.table(name).where({});
             var SERVER = WIKI.config.socket;
 
+            WIKI.logger.info(
+                chalk.red('SYNC') +
+                    chalk.blue(_.padStart(name, 10)) +
+                    '============= Sync To Local ============ localPages ' +
+                    localPages.length,
+            );
+
             axios
-                .post(`${SERVER}/sync-to-server`, { localPages, name, mac })
+                .post(`${SERVER}/sync-to-local`, { localPages, name, mac })
                 .then(async (res) => {
                     var serverPages = res.data;
+                    console.log('serverPages', serverPages);
+
                     WIKI.logger.info(
                         chalk.red('SYNC') +
                             chalk.blue(_.padStart(name, 10)) +
@@ -122,12 +130,15 @@ module.exports = {
                                 await WIKI.models.knex.table(name).insert(clonedPage);
                             }
 
-                            page.localSynced = page.localSynced + `,${mac}`;
-                            await page.update({ localSynced: page.localSynced });
                             // console.log('page', page);
                             WIKI.logger.info(
                                 chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + ': Downloaded',
                                 page.id,
+                            );
+
+                            console.log(
+                                chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)),
+                                'server data size ' + serverPages.length + ' mac = ' + mac,
                             );
                         } catch (e) {
                             WIKI.logger.info(
@@ -137,14 +148,12 @@ module.exports = {
                     }
                 })
                 .catch((error) => {
-                    console.error(error);
+                    WIKI.logger.info(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)) + 'API ERROR');
+                    // console.error(error);
                 });
 
             // db.sync();
-            console.log(
-                chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)),
-                'server data size ' + serverPages.length + ' mac = ' + mac,
-            );
+
             //*/
         } catch (e) {
             console.log(chalk.red('SYNC') + chalk.blue(_.padStart(name, 10)), e, name);
@@ -152,17 +161,17 @@ module.exports = {
     },
     async syncTable(name) {
         this.syncTableToServer2(name);
-        this.syncTableToLocal2(name);
+        // this.syncTableToLocal2(name);
     },
     /**
      * Sync To Cloud
      */
     async syncServer() {
         this.syncTable('pages');
-        this.syncTable('pageTree');
-        this.syncTable('assets');
-        this.syncTable('assetFolders');
-        this.syncTable('assetData');
+        // this.syncTable('pageTree');
+        // this.syncTable('assets');
+        // this.syncTable('assetFolders');
+        // this.syncTable('assetData');
     },
     /**
      * Pre-Master Boot Sequence
