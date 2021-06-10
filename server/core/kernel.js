@@ -83,13 +83,6 @@ module.exports = {
             var localPages = await WIKI.models.knex.table(name).where({});
             var SERVER = WIKI.config.socket;
 
-            WIKI.logger.info(
-                chalk.red('SYNC') +
-                    chalk.blue(_.padStart(name, 10)) +
-                    '============= Sync To Local ============ localPages ' +
-                    localPages.length,
-            );
-
             axios
                 .post(`${SERVER}/sync-to-local`, { localPages, name, mac })
                 .then(async (res) => {
